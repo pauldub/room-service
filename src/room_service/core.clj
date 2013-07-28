@@ -6,21 +6,21 @@
 (defn modified-since [time file]
   (clj-time.core/after? (clj-time.coerce/from-long (.lastModified file)) time))
 
-(def dry-run true)
+(def dry-run false)
 
 (defn delete [file]
-  (if (= dry-run false)
+  (if (true? dry-run)
     (println (str "delete " (.getName file)))
     (do
       (println (str "deleting " (.getName file)))
       (.delete file))))
 
 (defn move [file dest]
-  (if dry-run
+  (if (true? dry-run)
     (println (str "move " (.getName file) " to " dest))
     (do
       (println (str "moving " (.getName file) " to " dest))
-      (.renameTo dest))))
+      (.renameTo file (clojure.java.io/file dest)))))
 
 (defn modified-since-days [days file]
   (modified-since (clj-time.core/minus (clj-time.core/now) (clj-time.core/days days)) file))
